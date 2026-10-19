@@ -55,13 +55,8 @@ a:hover{border-bottom-color:var(--fg);text-shadow:var(--glow)}
 main{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:0 var(--gutter) 64px}
 
 /* hero */
-.hero{padding:44px 0 28px}
-.boot{margin:0 0 22px;color:var(--mute);font-size:12px;min-height:7.5em;white-space:pre-wrap}
-.boot .ok{color:var(--fg)} .boot .warn{color:var(--amber)}
-.banner{margin:0;color:var(--fg);text-shadow:var(--glow);font-weight:800;
-  font-size:clamp(7px,2.9vw,20px);line-height:1.08;letter-spacing:0;white-space:pre;overflow:hidden}
-.banner .b2{color:transparent;-webkit-text-stroke:0;text-shadow:none;background:linear-gradient(90deg,var(--fg),var(--cyan));-webkit-background-clip:text;background-clip:text}
-.tag{margin:26px 0 6px;font-size:clamp(18px,3.4vw,30px);font-weight:700;color:#e9ffef;line-height:1.25}
+.hero{padding:clamp(48px,12vh,120px) 0 28px}
+.tag{margin:0 0 14px;font-size:clamp(30px,6.2vw,64px);font-weight:800;color:var(--fg);text-shadow:var(--glow);line-height:1.08;letter-spacing:-.02em}
 .tag s{color:var(--mute);text-decoration-thickness:2px}
 .sub{margin:0 0 22px;color:var(--dim);max-width:62ch}
 .prompt{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
@@ -93,9 +88,9 @@ section{margin-top:56px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:inherit;font-size:12px;cursor:pointer;background:none;color:var(--dim);border:1px solid var(--line);border-radius:3px;padding:4px 8px}
 .chip[aria-pressed=true]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.card{background:var(--bg);padding:20px;display:flex;flex-direction:column;gap:12px;transition:background .15s}
-.card:hover{background:var(--panel)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.card{background:var(--bg);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:12px;transition:background .15s}
+.card:hover{background:var(--panel);border-color:var(--line-hi)}
 .card .top{display:flex;align-items:baseline;gap:10px}
 .card h3{margin:0;font-size:17px;color:var(--fg);text-shadow:var(--glow)}
 .card h3::before{content:"./";color:var(--mute);text-shadow:none}
@@ -111,7 +106,7 @@ summary::before{content:"[+] "} details[open] summary::before{content:"[-] "}
 summary:hover{color:var(--fg)}
 .man{margin-top:10px;font-size:12.5px;color:var(--fg-soft)}
 .man dt{color:var(--amber);margin-top:8px} .man dd{margin:2px 0 0 14px}
-.empty{background:var(--bg);padding:28px;color:var(--amber)}
+.empty{grid-column:1/-1;border:1px dashed var(--line);padding:28px;color:var(--amber)}
 
 /* install steps */
 .steps{display:grid;gap:14px;counter-reset:s}
@@ -155,18 +150,6 @@ footer .eof{color:var(--fg)}
 
 <main>
   <section class="hero" style="margin-top:0">
-    <pre class="boot" id="boot" aria-hidden="true"></pre>
-<pre class="banner" aria-label="another catalog"> ███  █   █  ███  █████ █   █ █████ ████
-█   █ ██  █ █   █   █   █   █ █     █   █
-█████ █ █ █ █   █   █   █████ ████  ████
-█   █ █  ██ █   █   █   █   █ █     █  █
-█   █ █   █  ███    █   █   █ █████ █   █
-<span class="b2">
- ████  ███  █████  ███  █      ███   ████
-█     █   █   █   █   █ █     █   █ █
-█     █████   █   █████ █     █   █ █  ██
-█     █   █   █   █   █ █     █   █ █   █
- ████ █   █   █   █   █ █████  ███   ████</span></pre>
     <h1 class="tag">Oh great, another catalog<span class="cursor" aria-hidden="true"></span></h1>
     <p class="sub">…of Claude Code skills. Да, <s>ещё один</s> ещё один. Зато наш: каждый скилл — отдельный плагин, ставится одной командой и обновляется через <code>git push</code>.</p>
     <div class="prompt">
@@ -277,20 +260,6 @@ git commit -am <span class="s">"feat: &lt;имя&gt;"</span> &amp;&amp; git push
     b.textContent = ok ? "copied" : "error"; b.classList.add("done");
     setTimeout(() => { b.textContent = "copy"; b.classList.remove("done"); }, 1400);
   });
-
-  /* boot log */
-  const bootLines = [
-    ["mu", "[    0.000] BIOS: another-skills-catalog v1"],
-    ["ok", "[  OK  ] mounted /plugins"],
-    ["ok", "[  OK  ] parsed marketplace.json"],
-    ["warn", "[ WARN ] yet another catalog detected. proceeding anyway"],
-    ["ok", "[  OK  ] sarcasm module loaded"],
-  ];
-  const boot = $("#boot");
-  if (reduce) boot.innerHTML = bootLines.map(([c, t]) => `<span class="${c}">${esc(t)}</span>`).join("\n");
-  else bootLines.forEach(([c, t], i) => setTimeout(() => {
-    boot.insertAdjacentHTML("beforeend", (i ? "\n" : "") + `<span class="${c}">${esc(t)}</span>`);
-  }, 140 + i * 230));
 
   /* matrix rain */
   const cv = $("#rain");
