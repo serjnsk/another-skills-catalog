@@ -1,0 +1,34 @@
+{
+  "name": "another-skills-catalog",
+  "owner": {
+    "name": "Directline"
+  },
+  "description": "Oh great, another catalog... of Claude Code skills.",
+  "plugins": [
+    {
+      "name": "hig",
+      "source": "./plugins/hig",
+      "description": "Apple Human Interface Guidelines как правила проектирования мобильных экранов: размеры, типографика, цвета, компоненты, аудит макета (/hig audit).",
+      "version": "1.0.0",
+      "keywords": [
+        "design",
+        "ios",
+        "hig",
+        "ui",
+        "mobile"
+      ]
+    },
+    {
+      "name": "tweak",
+      "source": "./plugins/tweak",
+      "description": "Живая панель правок для любого HTML-прототипа: ползунки, цвета, правка элементов кликом и сохранение обратно в файл (/tweak).",
+      "version": "1.0.0",
+      "keywords": [
+        "design",
+        "html",
+        "prototype",
+        "ui"
+      ]
+    }
+  ]
+}

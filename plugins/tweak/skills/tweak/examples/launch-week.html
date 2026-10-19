@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch week</title>
+<style>
+  :root {
+    --accent: #2f6fdb;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --paper: #f7f6f1;
+    --radius: 12px;
+    --space: 16px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #161616; font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif; color: var(--ink); }
+  .card { width: 440px; background: var(--paper); border-radius: 6px; padding: 32px 28px 24px; }
+  .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  h1 { font-size: 36px; line-height: 1.1; margin: 0 0 12px; letter-spacing: -.02em; }
+  h1 span { color: var(--accent); }
+  .lead { font-size: 16px; color: #3a3a3a; margin: 0 0 var(--space); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: var(--space); }
+  .step { background: #fff; border: 1px solid #e3e1da; border-radius: var(--radius); padding: 14px 12px; }
+  .step small { color: var(--accent); font-size: 13px; }
+  .step h3 { font-size: 16px; margin: 10px 0 4px; }
+  .step p { font-size: 12px; color: var(--muted); margin: 0; }
+  .cta { display: inline-block; background: var(--accent); color: #fff; font-weight: 600; font-size: 15px; padding: 14px 20px; border-radius: 8px; text-decoration: none; box-shadow: 0 6px 16px rgba(47, 111, 219, .35); }
+  footer { display: flex; justify-content: space-between; margin-top: 120px; padding-top: 14px; border-top: 1px solid #e3d5cc; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+</style>
+</head>
+<body>
+  <main class="card">
+    <p class="eyebrow">Launch plan · Q4</p>
+    <h1>Launch <span>week</span></h1>
+    <p class="lead">Everything we ship this week, in three steps.</p>
+    <div class="steps">
+      <div class="step"><small>01</small><h3>Tease</h3><p>Waitlist and a teaser</p></div>
+      <div class="step"><small>02</small><h3>Launch</h3><p>Live demo and emails</p></div>
+      <div class="step"><small>03</small><h3>Follow up</h3><p>Recap and reviews</p></div>
+    </div>
+    <a class="cta" href="#start">Get started</a>
+    <footer><span>Ships Monday to Friday</span><span style="color: #9a9a9a">01 / 03</span></footer>
+  </main>
+</body>
+</html>

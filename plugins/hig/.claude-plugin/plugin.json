@@ -1,0 +1,7 @@
+{
+  "name": "hig",
+  "version": "1.0.0",
+  "description": "Apple Human Interface Guidelines как правила проектирования мобильных экранов: размеры, типографика, цвета, компоненты, аудит макета (/hig audit).",
+  "author": { "name": "Directline" },
+  "keywords": ["design", "ios", "hig", "ui", "mobile"]
+}

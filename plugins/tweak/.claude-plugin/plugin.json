@@ -1,0 +1,7 @@
+{
+  "name": "tweak",
+  "version": "1.0.0",
+  "description": "Живая панель правок для любого HTML-прототипа: ползунки, цвета, правка элементов кликом и сохранение обратно в файл (/tweak).",
+  "author": { "name": "Directline" },
+  "keywords": ["design", "html", "prototype", "ui"]
+}
