@@ -11,6 +11,8 @@ plugins/<имя>/
   skills/<имя>/SKILL.md           ← name и description в YAML-шапке
   skills/<имя>/references|scripts|assets|examples/
 scripts/catalog.py                ← build / check / new / link
+docs/index.html                   ← сайт на GitHub Pages (терминальный стиль); данные берёт из docs/catalog.json
+docs/catalog.json                 ← ГЕНЕРИРУЕТСЯ build
 ```
 
 ## Правила

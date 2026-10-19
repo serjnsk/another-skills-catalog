@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>another-skills-catalog</title>
+<meta name="description" content="Oh great, another catalog... of Claude Code skills. Каталог плагинов-скиллов для Claude Code.">
+<meta name="theme-color" content="#040704">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23040704'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%2339ff7a'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040704; --panel:#071007; --panel-2:#0a160b; --line:#173a1d; --line-hi:#2a6a35;
+  --fg:#39ff7a; --fg-soft:#a6f5bd; --dim:#62b47a; --mute:#3f7a50;
+  --amber:#ffb53d; --red:#ff5f56; --cyan:#5ce1e6;
+  --glow:0 0 6px rgba(57,255,122,.55),0 0 18px rgba(57,255,122,.18);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --gutter:16px; --max:1080px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg-soft);font:14px/1.6 var(--mono);overflow-x:hidden;min-height:100vh}
+::selection{background:var(--fg);color:var(--bg)}
+a{color:var(--fg);text-decoration:none;border-bottom:1px dashed var(--mute)}
+a:hover{border-bottom-color:var(--fg);text-shadow:var(--glow)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* CRT: scanlines + vignette + flicker */
+.crt::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.28) 2px 3px)}
+.crt::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:51;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%)}
+@media (prefers-reduced-motion:no-preference){
+  .crt main{animation:flicker 6s infinite steps(1)}
+  @keyframes flicker{0%,100%{opacity:1}47%{opacity:.985}48%{opacity:.93}49%{opacity:1}}
+}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.13;pointer-events:none}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;
+  padding:9px var(--gutter);background:rgba(4,7,4,.88);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  font-size:12px;color:var(--dim)}
+.dots{display:flex;gap:6px}
+.dots i{width:11px;height:11px;border-radius:50%;background:var(--red)}
+.dots i:nth-child(2){background:var(--amber)} .dots i:nth-child(3){background:var(--fg)}
+.bar .title{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar nav{display:flex;gap:14px}
+.bar nav a{border:0;color:var(--dim)} .bar nav a:hover{color:var(--fg)}
+.status{display:inline-flex;align-items:center;gap:6px;color:var(--fg)}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--fg);box-shadow:var(--glow)}
+@media (max-width:640px){.bar nav{display:none}.bar .title{text-align:left}}
+
+main{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:0 var(--gutter) 64px}
+
+/* hero */
+.hero{padding:44px 0 28px}
+.boot{margin:0 0 22px;color:var(--mute);font-size:12px;min-height:7.5em;white-space:pre-wrap}
+.boot .ok{color:var(--fg)} .boot .warn{color:var(--amber)}
+.banner{margin:0;color:var(--fg);text-shadow:var(--glow);font-weight:800;
+  font-size:clamp(7px,2.9vw,20px);line-height:1.08;letter-spacing:0;white-space:pre;overflow:hidden}
+.banner .b2{color:transparent;-webkit-text-stroke:0;text-shadow:none;background:linear-gradient(90deg,var(--fg),var(--cyan));-webkit-background-clip:text;background-clip:text}
+.tag{margin:26px 0 6px;font-size:clamp(18px,3.4vw,30px);font-weight:700;color:#e9ffef;line-height:1.25}
+.tag s{color:var(--mute);text-decoration-thickness:2px}
+.sub{margin:0 0 22px;color:var(--dim);max-width:62ch}
+.prompt{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.cmd{display:inline-flex;align-items:center;gap:10px;max-width:100%;
+  background:var(--panel);border:1px solid var(--line-hi);padding:10px 12px;border-radius:4px;color:var(--fg)}
+.cmd code{white-space:nowrap;overflow-x:auto;scrollbar-width:none}
+.cmd code::-webkit-scrollbar{display:none}
+.cmd .ps{color:var(--amber);user-select:none}
+.copy{font:inherit;font-size:12px;cursor:pointer;color:var(--bg);background:var(--fg);border:0;border-radius:3px;padding:3px 8px;flex:none}
+.copy:hover{box-shadow:var(--glow)} .copy.done{background:var(--amber)}
+.cursor{display:inline-block;width:.6em;height:1.1em;background:var(--fg);vertical-align:-2px;box-shadow:var(--glow)}
+@media (prefers-reduced-motion:no-preference){.cursor{animation:blink 1.05s steps(1) infinite}@keyframes blink{50%{opacity:0}}}
+
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font-size:12px;color:var(--mute)}
+.stats b{color:var(--fg);font-weight:700}
+
+/* sections */
+section{margin-top:56px}
+.h{display:flex;align-items:baseline;gap:10px;margin:0 0 18px;font-size:15px;font-weight:700;color:#e9ffef}
+.h .ps{color:var(--amber)} .h small{margin-left:auto;font-weight:400;font-size:12px;color:var(--mute)}
+.rule{border:0;border-top:1px dashed var(--line);margin:0 0 18px}
+
+/* plugin grid (command surface) */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.grep{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:8px 12px}
+.grep span{color:var(--amber)}
+.grep input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--fg);font:inherit;caret-color:var(--fg)}
+.grep input::placeholder{color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12px;cursor:pointer;background:none;color:var(--dim);border:1px solid var(--line);border-radius:3px;padding:4px 8px}
+.chip[aria-pressed=true]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.card{background:var(--bg);padding:20px;display:flex;flex-direction:column;gap:12px;transition:background .15s}
+.card:hover{background:var(--panel)}
+.card .top{display:flex;align-items:baseline;gap:10px}
+.card h3{margin:0;font-size:17px;color:var(--fg);text-shadow:var(--glow)}
+.card h3::before{content:"./";color:var(--mute);text-shadow:none}
+.ver{font-size:11px;color:var(--amber);border:1px solid rgba(255,181,61,.4);padding:0 5px;border-radius:2px}
+.card p{margin:0;color:var(--fg-soft)}
+.kw{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--mute)}
+.card .cmd{width:100%;padding:8px 10px;font-size:12.5px}
+.card .cmd code{flex:1}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;color:var(--dim);font-size:12px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"[+] "} details[open] summary::before{content:"[-] "}
+summary:hover{color:var(--fg)}
+.man{margin-top:10px;font-size:12.5px;color:var(--fg-soft)}
+.man dt{color:var(--amber);margin-top:8px} .man dd{margin:2px 0 0 14px}
+.empty{background:var(--bg);padding:28px;color:var(--amber)}
+
+/* install steps */
+.steps{display:grid;gap:14px;counter-reset:s}
+.step{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:start}
+.step::before{counter-increment:s;content:"0" counter(s);grid-row:span 2;color:var(--bg);background:var(--fg);font-weight:800;padding:2px 7px;border-radius:2px}
+.two>*,.step>*{min-width:0}
+.step p{margin:0;color:var(--fg-soft)}
+.step .cmd{justify-self:start}
+pre.block{margin:0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--fg);padding:14px 16px;overflow-x:auto;color:var(--fg-soft);font-size:12.5px;line-height:1.55}
+pre.block .k{color:var(--cyan)} pre.block .s{color:var(--amber)} pre.block .c{color:var(--mute)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:20px}
+.note{color:var(--dim);font-size:12.5px;margin:10px 0 0}
+
+/* live terminal */
+.term{border:1px solid var(--line-hi);border-radius:6px;overflow:hidden;background:#020402;box-shadow:0 0 0 1px rgba(57,255,122,.05),0 20px 60px rgba(0,0,0,.6)}
+.term-h{display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--panel-2);border-bottom:1px solid var(--line);font-size:12px;color:var(--dim)}
+.term-h span{flex:1;text-align:center}
+.term-b{height:340px;overflow-y:auto;padding:14px 16px;font-size:13px;cursor:text}
+.term-b .ln{white-space:pre-wrap;word-break:break-word;margin:0}
+.term-b .in{color:#e9ffef} .term-b .in .ps{color:var(--amber)}
+.term-b .err{color:var(--red)} .term-b .hl{color:var(--fg)} .term-b .am{color:var(--amber)} .term-b .mu{color:var(--mute)}
+.term-row{display:flex;align-items:center;gap:8px}
+.term-row .ps{color:var(--amber);white-space:nowrap}
+.term-row input{flex:1;min-width:0;background:none;border:0;outline:0;color:#e9ffef;font:inherit;caret-color:var(--fg)}
+
+footer{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:22px var(--gutter) 40px;border-top:1px dashed var(--line);
+  display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;color:var(--mute)}
+footer .eof{color:var(--fg)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body class="crt">
+<canvas id="rain" aria-hidden="true"></canvas>
+
+<header class="bar">
+  <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="title">guest@another-skills-catalog: ~ — zsh — 80×24</div>
+  <nav aria-label="Разделы"><a href="#plugins">ls</a><a href="#install">install</a><a href="#contribute">contribute</a><a href="#shell">shell</a></nav>
+  <span class="status" id="st-online">online</span>
+</header>
+
+<main>
+  <section class="hero" style="margin-top:0">
+    <pre class="boot" id="boot" aria-hidden="true"></pre>
+<pre class="banner" aria-label="another catalog"> ███  █   █  ███  █████ █   █ █████ ████
+█   █ ██  █ █   █   █   █   █ █     █   █
+█████ █ █ █ █   █   █   █████ ████  ████
+█   █ █  ██ █   █   █   █   █ █     █  █
+█   █ █   █  ███    █   █   █ █████ █   █
+<span class="b2">
+ ████  ███  █████  ███  █      ███   ████
+█     █   █   █   █   █ █     █   █ █
+█     █████   █   █████ █     █   █ █  ██
+█     █   █   █   █   █ █     █   █ █   █
+ ████ █   █   █   █   █ █████  ███   ████</span></pre>
+    <h1 class="tag">Oh great, another catalog<span class="cursor" aria-hidden="true"></span></h1>
+    <p class="sub">…of Claude Code skills. Да, <s>ещё один</s> ещё один. Зато наш: каждый скилл — отдельный плагин, ставится одной командой и обновляется через <code>git push</code>.</p>
+    <div class="prompt">
+      <div class="cmd"><span class="ps">$</span><code id="hero-cmd">/plugin marketplace add serjnsk/another-skills-catalog</code><button class="copy" data-copy="#hero-cmd">copy</button></div>
+    </div>
+    <div class="stats" id="stats">
+      <span>plugins: <b id="s-plugins">…</b></span>
+      <span>skills: <b id="s-skills">…</b></span>
+      <span>files: <b id="s-files">…</b></span>
+      <span>license: <b>use-it-don't-abuse-it</b></span>
+    </div>
+  </section>
+
+  <section id="plugins">
+    <h2 class="h"><span class="ps">$</span> ls -la plugins/ <small id="ls-count"></small></h2>
+    <div class="toolbar">
+      <label class="grep"><span>grep</span><input id="q" type="search" placeholder="-i &quot;ios&quot;, &quot;html&quot;, &quot;прототип&quot;…" autocomplete="off" spellcheck="false"><span class="sr">Поиск по каталогу</span></label>
+      <div class="chips" id="chips" role="group" aria-label="Фильтр по тегам"></div>
+    </div>
+    <div class="grid" id="grid" aria-live="polite"><div class="empty">loading catalog.json…</div></div>
+  </section>
+
+  <section id="install">
+    <h2 class="h"><span class="ps">$</span> cat INSTALL.md</h2>
+    <hr class="rule">
+    <div class="two">
+      <div class="steps">
+        <div class="step"><p>Подключи каталог (один раз, в терминальном <code>claude</code>):</p>
+          <div class="cmd"><span class="ps">&gt;</span><code id="i1">/plugin marketplace add serjnsk/another-skills-catalog</code><button class="copy" data-copy="#i1">copy</button></div></div>
+        <div class="step"><p>Поставь нужные плагины — команды есть в каждой карточке выше:</p>
+          <div class="cmd"><span class="ps">&gt;</span><code id="i2">/plugin install hig@another-skills-catalog</code><button class="copy" data-copy="#i2">copy</button></div></div>
+        <div class="step"><p>Подтягивай обновления:</p>
+          <div class="cmd"><span class="ps">&gt;</span><code id="i3">/plugin marketplace update another-skills-catalog</code><button class="copy" data-copy="#i3">copy</button></div></div>
+      </div>
+      <div>
+        <pre class="block"><span class="c">// .claude/settings.json в репозитории проекта —
+// Claude сам предложит каталог всем, кто его откроет</span>
+{
+  <span class="k">"extraKnownMarketplaces"</span>: {
+    <span class="k">"another-skills-catalog"</span>: {
+      <span class="k">"source"</span>: { <span class="k">"source"</span>: <span class="s">"github"</span>, <span class="k">"repo"</span>: <span class="s">"serjnsk/another-skills-catalog"</span> }
+    }
+  },
+  <span class="k">"enabledPlugins"</span>: {
+    <span class="k">"hig@another-skills-catalog"</span>: <span class="s">true</span>
+  }
+}</pre>
+        <p class="note">// плагин = скилл. Вызывай через <code>/имя</code> или просто опиши задачу — Claude включит скилл сам.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contribute">
+    <h2 class="h"><span class="ps">$</span> ./contribute.sh <small>pull requests welcome</small></h2>
+    <hr class="rule">
+    <pre class="block"><span class="c"># 1. заготовка: plugins/&lt;имя&gt;/ с plugin.json и SKILL.md</span>
+python3 scripts/catalog.py new <span class="s">&lt;имя&gt;</span>
+
+<span class="c"># 2. заполнить все TODO; длинные справочники — в references/, скрипты — в scripts/</span>
+
+<span class="c"># 3. проверка + пересборка marketplace.json, README и этой страницы</span>
+python3 scripts/catalog.py build
+
+<span class="c"># 4. при правке существующего плагина — поднять version, иначе обновление не придёт</span>
+git commit -am <span class="s">"feat: &lt;имя&gt;"</span> &amp;&amp; git push</pre>
+  </section>
+
+  <section id="shell">
+    <h2 class="h"><span class="ps">$</span> ./shell <small>попробуй: help</small></h2>
+    <div class="term">
+      <div class="term-h"><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div><span>catalog-sh — interactive</span><div style="width:45px"></div></div>
+      <div class="term-b" id="term">
+        <div id="out"></div>
+        <form class="term-row" id="tf" autocomplete="off">
+          <label class="ps" for="ti">guest@catalog:~$</label>
+          <input id="ti" spellcheck="false" autocapitalize="off" aria-label="Команда">
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="eof">-- EOF --</span>
+  <a href="https://github.com/serjnsk/another-skills-catalog">github.com/serjnsk/another-skills-catalog</a>
+  <span>built with Claude Code · rendered at 80×24 in spirit</span>
+</footer>
+
+<script>
+(() => {
+  const REPO = "serjnsk/another-skills-catalog";
+  const MK = "another-skills-catalog";
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let DATA = null;
+
+  /* copy */
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch { const a = document.createElement("textarea"); a.value = t; a.style.position = "fixed"; a.style.opacity = "0";
+      document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand("copy"); } catch {} a.remove(); return ok; }
+  }
+  document.addEventListener("click", async e => {
+    const b = e.target.closest(".copy"); if (!b) return;
+    const src = b.dataset.copy ? $(b.dataset.copy).textContent : b.dataset.text;
+    const ok = await copyText(src);
+    b.textContent = ok ? "copied" : "error"; b.classList.add("done");
+    setTimeout(() => { b.textContent = "copy"; b.classList.remove("done"); }, 1400);
+  });
+
+  /* boot log */
+  const bootLines = [
+    ["mu", "[    0.000] BIOS: another-skills-catalog v1"],
+    ["ok", "[  OK  ] mounted /plugins"],
+    ["ok", "[  OK  ] parsed marketplace.json"],
+    ["warn", "[ WARN ] yet another catalog detected. proceeding anyway"],
+    ["ok", "[  OK  ] sarcasm module loaded"],
+  ];
+  const boot = $("#boot");
+  if (reduce) boot.innerHTML = bootLines.map(([c, t]) => `<span class="${c}">${esc(t)}</span>`).join("\n");
+  else bootLines.forEach(([c, t], i) => setTimeout(() => {
+    boot.insertAdjacentHTML("beforeend", (i ? "\n" : "") + `<span class="${c}">${esc(t)}</span>`);
+  }, 140 + i * 230));
+
+  /* matrix rain */
+  const cv = $("#rain");
+  if (!reduce && cv.getContext) {
+    const ctx = cv.getContext("2d"); const glyphs = "アカサタナハマヤラワ0123456789ABCDEF<>/{}$#_";
+    let cols = [], fs = 14, w, h;
+    const size = () => { w = cv.width = innerWidth; h = cv.height = innerHeight; cols = Array(Math.ceil(w / fs)).fill(0).map(() => Math.random() * -h / fs); };
+    size(); addEventListener("resize", size);
+    let last = 0;
+    const tick = t => {
+      if (t - last > 70) { last = t;
+        ctx.fillStyle = "rgba(4,7,4,.18)"; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#39ff7a"; ctx.font = fs + "px monospace";
+        cols.forEach((y, i) => { ctx.fillText(glyphs[Math.random() * glyphs.length | 0], i * fs, y * fs);
+          cols[i] = y * fs > h && Math.random() > .975 ? 0 : y + 1; });
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  /* catalog */
+  let activeTag = null;
+  const card = p => {
+    const cmd = `/plugin install ${p.name}@${MK}`;
+    const man = p.skills.map(s => `
+      <dl class="man">
+        <dt>NAME</dt><dd>/${esc(s.name)}${s.hint ? ` <span style="color:var(--mute)">${esc(s.hint)}</span>` : ""}</dd>
+        <dt>DESCRIPTION</dt><dd>${esc(s.description)}</dd>
+        <dt>FILES</dt><dd>${s.files} · <a href="https://github.com/${REPO}/tree/main/plugins/${encodeURIComponent(p.name)}/skills/${encodeURIComponent(s.name)}">source</a></dd>
+      </dl>`).join("");
+    return `<article class="card" data-name="${esc(p.name)}">
+      <div class="top"><h3>${esc(p.name)}</h3><span class="ver">v${esc(p.version)}</span></div>
+      <p>${esc(p.description)}</p>
+      <div class="kw">${(p.keywords || []).map(k => `<span>#${esc(k)}</span>`).join("")}</div>
+      <div class="cmd"><span class="ps">&gt;</span><code>${esc(cmd)}</code><button class="copy" data-text="${esc(cmd)}" aria-label="Скопировать команду установки ${esc(p.name)}">copy</button></div>
+      <details><summary>man ${esc(p.name)}</summary>${man}</details>
+    </article>`;
+  };
+  function render() {
+    const q = $("#q").value.trim().toLowerCase();
+    const list = DATA.plugins.filter(p => {
+      if (activeTag && !(p.keywords || []).includes(activeTag)) return false;
+      if (!q) return true;
+      const hay = [p.name, p.description, ...(p.keywords || []), ...p.skills.map(s => s.description)].join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+    $("#grid").innerHTML = list.length ? list.map(card).join("") :
+      `<div class="empty">grep: no matches. Ну хоть где-то каталогов не хватает.</div>`;
+    $("#ls-count").textContent = `total ${list.length}`;
+  }
+  function renderChips() {
+    const tags = [...new Set(DATA.plugins.flatMap(p => p.keywords || []))].sort();
+    $("#chips").innerHTML = tags.map(t => `<button class="chip" aria-pressed="false" data-tag="${esc(t)}">#${esc(t)}</button>`).join("");
+    $("#chips").addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      activeTag = activeTag === b.dataset.tag ? null : b.dataset.tag;
+      $("#chips").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.tag === activeTag));
+      render();
+    });
+  }
+  $("#q").addEventListener("input", render);
+
+  fetch("catalog.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+    DATA = d;
+    const skills = d.plugins.flatMap(p => p.skills);
+    $("#s-plugins").textContent = d.plugins.length;
+    $("#s-skills").textContent = skills.length;
+    $("#s-files").textContent = skills.reduce((a, s) => a + s.files, 0);
+    renderChips(); render(); greet();
+  }).catch(err => {
+    $("#grid").innerHTML = `<div class="empty">ERR: catalog.json не загрузился (${esc(err.message)}). Каталог есть на <a href="https://github.com/${REPO}">GitHub</a>.</div>`;
+    $("#st-online").textContent = "degraded";
+    greet();
+  });
+
+  /* interactive shell */
+  const out = $("#out"), ti = $("#ti"), termEl = $("#term");
+  const hist = []; let hi = 0;
+  const print = (html, cls = "") => { out.insertAdjacentHTML("beforeend", `<p class="ln ${cls}">${html}</p>`); termEl.scrollTop = termEl.scrollHeight; };
+  const find = n => DATA && DATA.plugins.find(p => p.name === n);
+  const cmds = {
+    help: () => print(
+`<span class="hl">доступные команды:</span>
+  ls                 список плагинов
+  cat &lt;плагин&gt;       описание и man
+  install &lt;плагин&gt;   команда установки (копируется в буфер)
+  add                как подключить каталог
+  grep &lt;слово&gt;       поиск по каталогу
+  whoami · date · clear · sudo · exit`),
+    ls: () => DATA ? print(DATA.plugins.map(p => `<span class="hl">drwxr-xr-x</span>  ${esc(p.name).padEnd(14)} <span class="am">v${esc(p.version)}</span>  ${esc(p.skills.length)} skill`).join("\n")) : print("catalog offline", "err"),
+    cat: a => { const p = find(a[0]); if (!a[0]) return print("usage: cat &lt;плагин&gt;", "err");
+      if (!p) return print(`cat: ${esc(a[0])}: No such plugin`, "err");
+      print(`<span class="hl">${esc(p.name)}</span> <span class="am">v${esc(p.version)}</span>\n${esc(p.description)}\n\n${p.skills.map(s => `/${esc(s.name)} ${esc(s.hint)}\n<span class="mu">${esc(s.description)}</span>`).join("\n\n")}`); },
+    install: async a => { const p = find(a[0]); if (!a[0]) return print("usage: install &lt;плагин&gt;", "err");
+      if (!p) return print(`install: ${esc(a[0])}: not in catalog. Видимо, придётся сделать ещё один каталог.`, "err");
+      const c = `/plugin install ${p.name}@${MK}`; const ok = await copyText(c);
+      print(`${ok ? '<span class="hl">[copied]</span> ' : ""}${esc(c)}\n<span class="mu">вставь это в claude. добавлять каталог сначала: команда add</span>`); },
+    add: async () => { const c = `/plugin marketplace add ${REPO}`; const ok = await copyText(c); print(`${ok ? '<span class="hl">[copied]</span> ' : ""}${esc(c)}`); },
+    grep: a => { if (!a.length) return print("usage: grep &lt;слово&gt;", "err"); $("#q").value = a.join(" "); if (DATA) render();
+      print(`<span class="mu">фильтр применён к ls выше →</span> <a href="#plugins">#plugins</a>`); },
+    whoami: () => print("guest — ещё один человек, которому понадобился ещё один каталог"),
+    date: () => print(esc(new Date().toString())),
+    clear: () => { out.innerHTML = ""; },
+    sudo: () => print("guest is not in the sudoers file. This incident will be reported.", "err"),
+    exit: () => print("logout\n<span class=\"mu\">…шутка. отсюда не уходят.</span>"),
+    rm: () => print("rm: каталоги не удаляются, они только множатся", "err"),
+    vim: () => print("ты отсюда не выйдешь. попробуй :q! — не поможет.", "am"),
+  };
+  function greet() {
+    print(`<span class="hl">catalog-sh 1.0</span> — ${DATA ? DATA.plugins.length : 0} plugins loaded. type <span class="am">help</span>.`);
+  }
+  $("#tf").addEventListener("submit", e => {
+    e.preventDefault();
+    const line = ti.value.trim(); ti.value = "";
+    print(`<span class="ps">guest@catalog:~$</span> ${esc(line)}`, "in");
+    if (!line) return;
+    hist.push(line); hi = hist.length;
+    const [c, ...args] = line.split(/\s+/);
+    const fn = cmds[c.toLowerCase()];
+    fn ? fn(args) : print(`zsh: command not found: ${esc(c)} — попробуй help`, "err");
+  });
+  ti.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp" && hi > 0) { ti.value = hist[--hi]; e.preventDefault(); }
+    if (e.key === "ArrowDown") { hi = Math.min(hist.length, hi + 1); ti.value = hist[hi] || ""; e.preventDefault(); }
+    if (e.key === "Tab") { e.preventDefault(); const [c, a = ""] = ti.value.split(/\s+/);
+      if (a !== undefined && DATA && ti.value.includes(" ")) { const m = DATA.plugins.find(p => p.name.startsWith(a)); if (m) ti.value = `${c} ${m.name}`; }
+      else { const m = Object.keys(cmds).find(k => k.startsWith(c)); if (m) ti.value = m + " "; } }
+  });
+  termEl.addEventListener("click", e => { if (!e.target.closest("a") && !getSelection().toString()) ti.focus({ preventScroll: true }); });
+})();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 """Каталог скиллов: проверка, сборка marketplace.json и README, заготовка нового скилла.
 
 Использование (из корня репозитория):
-  python3 scripts/catalog.py build          # проверить всё и пересобрать .claude-plugin/marketplace.json + таблицу в README.md
+  python3 scripts/catalog.py build          # проверить всё и пересобрать marketplace.json, таблицу в README.md и docs/catalog.json для сайта
   python3 scripts/catalog.py check          # только проверить (код выхода 1, если есть ошибки или каталог устарел)
   python3 scripts/catalog.py new <имя>      # создать заготовку plugins/<имя>/ с plugin.json и SKILL.md
   python3 scripts/catalog.py link           # симлинки всех скиллов в ~/.claude/skills (для локальной разработки)
@@ -16,10 +16,12 @@ ROOT = Path(__file__).resolve().parent.parent
 PLUGINS = ROOT / "plugins"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 README = ROOT / "README.md"
+SITE_DATA = ROOT / "docs" / "catalog.json"
 TABLE_START = "<!-- catalog:start -->"
 TABLE_END = "<!-- catalog:end -->"
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
+REPO = "serjnsk/another-skills-catalog"
 MARKETPLACE_HEADER = {
     "name": "another-skills-catalog",
     "owner": {"name": "Directline"},
@@ -43,6 +45,7 @@ def frontmatter(path):
 
 def scan():
     errors, entries = [], []
+    skill_meta = {}
     for pdir in sorted(p for p in PLUGINS.iterdir() if p.is_dir()):
         where = f"plugins/{pdir.name}"
         manifest = pdir / ".claude-plugin" / "plugin.json"
@@ -75,6 +78,12 @@ def scan():
                 continue
             if fm.get("name") != sdir.name:
                 errors.append(f"{swhere}/SKILL.md: name ({fm.get('name')}) должен совпадать с именем папки")
+            skill_meta[sdir.name] = {
+                "name": sdir.name,
+                "description": fm.get("description", ""),
+                "hint": fm.get("argument-hint", ""),
+                "files": sum(1 for f in sdir.rglob("*") if f.is_file()),
+            }
             if not fm.get("description"):
                 errors.append(f"{swhere}/SKILL.md: пустой description — по нему Claude решает, когда включать скилл")
             if "TODO" in (sdir / "SKILL.md").read_text(encoding="utf-8"):
@@ -89,6 +98,7 @@ def scan():
         if meta.get("keywords"):
             entry["keywords"] = meta["keywords"]
         entry["_skills"] = [s.name for s in skills]
+        entry["_skill_meta"] = [skill_meta[s.name] for s in skills if s.name in skill_meta]
         entries.append(entry)
     return errors, entries
 
@@ -96,6 +106,20 @@ def scan():
 def render_marketplace(entries):
     data = dict(MARKETPLACE_HEADER)
     data["plugins"] = [{k: v for k, v in e.items() if not k.startswith("_")} for e in entries]
+    return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+
+
+def render_site_data(entries):
+    data = {
+        "marketplace": MARKETPLACE_HEADER["name"],
+        "description": MARKETPLACE_HEADER["description"],
+        "repo": REPO,
+        "plugins": [
+            {k: e[k] for k in ("name", "version", "description")}
+            | {"keywords": e.get("keywords", []), "skills": e["_skill_meta"]}
+            for e in entries
+        ],
+    }
     return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 
@@ -116,7 +140,11 @@ def cmd_build(write):
     if errors:
         print(f"\nОшибок: {len(errors)}. Каталог не собран.")
         return 1
-    outputs = {MARKETPLACE: render_marketplace(entries), README: render_readme(entries)}
+    outputs = {
+        MARKETPLACE: render_marketplace(entries),
+        README: render_readme(entries),
+        SITE_DATA: render_site_data(entries),
+    }
     stale = [p for p, c in outputs.items() if not p.exists() or p.read_text(encoding="utf-8") != c]
     if write:
         for p in stale:

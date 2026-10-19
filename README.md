@@ -2,6 +2,8 @@
 
 > Oh great, another catalog... of Claude Code skills. Да, ещё один. Зато наш.
 
+🖥 **Сайт каталога:** https://serjnsk.github.io/another-skills-catalog/
+
 Маркетплейс плагинов для Claude Code: каждый скилл здесь — отдельный плагин, ставь только нужные.
 
 ## Что есть
